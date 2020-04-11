@@ -1,5 +1,5 @@
 import React, { Component, CSSProperties } from 'react';
-import '../../style/FButton.scss';
+import '../../style/components/FButton.scss';
 
 type ButtonState = {
 	hovered: boolean;
