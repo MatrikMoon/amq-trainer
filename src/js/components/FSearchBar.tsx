@@ -34,6 +34,10 @@ export class FSearchBar extends Component<SearchBarProps> {
 		document.onkeydown = this.onKeyDown;
 	}
 
+	componentWillUnmount() {
+		document.onkeydown = null;
+	}
+
 	//Crazy, black-box keydown logic
 	//Traits:
 	//	- Enter Press when scrolling through autocomplete list

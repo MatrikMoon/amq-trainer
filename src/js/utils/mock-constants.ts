@@ -1,9 +1,9 @@
-import { AnimeListEntry } from "../..";
+import { Anime } from "../..";
 
-export const tempList: Array<AnimeListEntry> = [
+export const tempList: Array<Anime> = [
 	{
 		title: 'Konosuba I',
-		url: 'https://www.youtube.com/watch?v=fpG3BPNQepY',
+		url: 'https://openings.moe/video/KonoSubarashiiSekaiNiShukufukuO%21-OP01-NCBD.mp4',
 	},
 	{
 		title: 'Rickroll',
@@ -11,14 +11,14 @@ export const tempList: Array<AnimeListEntry> = [
 	},
 	{
 		title: 'Konosuba II',
-		url: 'https://www.youtube.com/watch?v=vdcddjV0l5o',
+		url: 'https://openings.moe/video/KonoSubarashiiSekaiNiShukufukuO%212-OP01-NCBD.mp4',
 	},
 	{
 		title: 'Death Parade',
-		url: 'https://www.youtube.com/watch?v=UjjTMNDZi-A',
+		url: 'https://openings.moe/video/DeathParade-OP01-NCBD.mp4',
 	},
 	{
-		title: 'SAO',
+		title: 'Sword Art Online I',
 		url: 'https://openings.moe/video/SwordArtOnline-OP02-NCOLD.mp4',
 	},
 ];

@@ -1,15 +1,12 @@
-type GameState = 'pregame' | 'loading' | 'ingame' | 'postgame' | 'error';
-type GuessingState = 'guessing' | 'postguess' | 'none';
-
-export interface AnimeListEntry {
+export interface Anime {
     title: string;
     url: string;
 }
 
 export interface QuizAnswer {
-    item: AnimeListEntry;
+    askedFor: Anime;
     correct: boolean;
-    answer?: AnimeListEntry;
+    answer?: Anime;
 }
 
 type MoeResponseItem = {

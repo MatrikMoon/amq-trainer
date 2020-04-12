@@ -2,34 +2,41 @@ import React, { Component } from 'react';
 import '../../style/Homepage.scss';
 import ReactPlayer from 'react-player';
 import 'typeface-roboto';
-import { GuessingState, AnimeListEntry, QuizAnswer } from '../..';
+import { Anime, QuizAnswer } from '../..';
+import ProgressMoon from '../components/progressMoon/ProgressMoon';
 import AnimeAutocomplete from './answerTypes/AnimeAutocomplete';
 import ButtonPicker from './answerTypes/ButtonPicker';
-import ProgressMoon from '../components/progressmoon/ProgressMoon';
+import { loadSettings } from '../utils/storage';
+
+type GuessingState = 'guessing' | 'postguess' | 'none';
 
 interface QuizProps {
-	animeList: Array<AnimeListEntry>;
+	animeList: Array<Anime>;
 	selectorType: 'autocomplete' | 'buttons';
 
-	onQuizEnd?: (answerHistory?: Array<QuizAnswer>) => void;
+	onQuizEnd?: (answerHistory: Array<QuizAnswer>) => void;
 }
 
 interface QuizState {
 	guessingState: GuessingState;
 
-	correctAnime?: AnimeListEntry;
-	guessedAnime?: AnimeListEntry;
+	correctAnime?: Anime;
+	guessedAnime?: Anime;
 	answerHistory?: Array<QuizAnswer>;
 	videoPlaying?: boolean;
 
 	//Input options
-	buttonOptions?: Array<AnimeListEntry>;
+	buttonOptions?: Array<Anime>;
 	autocompleteText?: string;
 }
 
 class Quiz extends Component<QuizProps, QuizState> {
+	private player: ReactPlayer | undefined;
+
 	constructor(props: any) {
 		super(props);
+
+		this.player = undefined;
 
 		this.state = {
 			guessingState: 'none',
@@ -41,6 +48,7 @@ class Quiz extends Component<QuizProps, QuizState> {
 		this.optionButtonClicked = this.optionButtonClicked.bind(this);
 		this.autocompleteTextChanged = this.autocompleteTextChanged.bind(this);
 		this.onAutocompleteCompleted = this.onAutocompleteCompleted.bind(this);
+		this.onVideoReady = this.onVideoReady.bind(this);
 	}
 
 	componentDidMount() {
@@ -49,10 +57,10 @@ class Quiz extends Component<QuizProps, QuizState> {
 
 	private switchSong() {
 		//Select an unasked song
-		let unasked: Array<AnimeListEntry> = this.props.animeList.filter(
+		let unasked: Array<Anime> = this.props.animeList.filter(
 			(listItem) =>
 				!this.state.answerHistory?.find(
-					(x) => x.item === listItem && x.correct
+					(x) => x.askedFor === listItem && x.correct
 				)
 		);
 
@@ -76,14 +84,14 @@ class Quiz extends Component<QuizProps, QuizState> {
 			this.setState({
 				guessingState: 'guessing',
 				correctAnime: newSong,
-				videoPlaying: true,
+				videoPlaying: false,
 
 				autocompleteText: '',
 			});
 		}
 
 		//If we don't have options to show, move to the postgame state
-		else this.props.onQuizEnd?.call(this, this.state.answerHistory);
+		else this.props.onQuizEnd?.call(this, this.state.answerHistory ?? []);
 	}
 
 	private startQuiz() {
@@ -98,24 +106,31 @@ class Quiz extends Component<QuizProps, QuizState> {
 		this.switchSong();
 	}
 
+	private onVideoReady() {
+		if (this.player && !this.state.videoPlaying) {
+			const settings = loadSettings();
+			const duration = this.player.getDuration();
+
+			if (duration > settings.guessTime && settings.guessTime > 0) {
+				const randomCeiling = duration - settings.guessTime;
+				const randomStart = Math.floor(Math.random() * randomCeiling);
+				this.player.seekTo(randomStart);
+			}
+			
+			this.setState({ videoPlaying: true });
+		}
+	}
+
 	private onVideoEnded() {
 		//If the player has selected a song, then they got it wrong and have been sitting there watching the video the whole time
 		//Let's go ahead and switch that for them
-		if (this.state.guessedAnime) this.switchSong();
+		if (this.state.guessingState === 'postguess') this.switchSong();
 
 		//If they haven't picked an option yet, just set the playing state to false and let the other logic handle everything else
 		else this.setState({ videoPlaying: false });
 	}
 
-	private shuffle(a: Array<any>) {
-		for (let i = a.length - 1; i > 0; i--) {
-			const j = Math.floor(Math.random() * (i + 1));
-			[a[i], a[j]] = [a[j], a[i]];
-		}
-		return a;
-	}
-
-	private optionButtonClicked(anime: AnimeListEntry) {
+	private optionButtonClicked(anime: Anime) {
 		this.onGuessed(anime);
 	}
 
@@ -126,16 +141,16 @@ class Quiz extends Component<QuizProps, QuizState> {
 	private onAutocompleteCompleted(value: string) {
 		const anime = this.props.animeList.find(
 			(x) => x.title === value
-		) as AnimeListEntry;
+		) as Anime;
 
 		this.onGuessed(anime ?? { title: value });
 	}
 
-	private onGuessed(anime: AnimeListEntry) {
+	private onGuessed(anime: Anime) {
 		//Add it to the answer history
 		let answerHistory = this.state.answerHistory ?? [];
 		answerHistory.push({
-			item: anime,
+			askedFor: anime,
 			correct: anime.title === this.state.correctAnime?.title,
 			answer: this.state.correctAnime,
 		});
@@ -154,13 +169,25 @@ class Quiz extends Component<QuizProps, QuizState> {
 			setTimeout(this.switchSong, 2000);
 	}
 
+	private shuffle(a: Array<any>) {
+		for (let i = a.length - 1; i > 0; i--) {
+			const j = Math.floor(Math.random() * (i + 1));
+			[a[i], a[j]] = [a[j], a[i]];
+		}
+		return a;
+	}
+
 	render() {
 		return (
 			<>
 				<ReactPlayer
+					ref={(ref) => {
+						if (ref) this.player = ref;
+					}}
 					url={this.state.correctAnime?.url}
+					onReady={this.onVideoReady}
 					onEnded={this.onVideoEnded}
-					playing
+					playing={this.state.videoPlaying}
 					style={{
 						display: `${
 							this.state.guessingState === 'guessing'

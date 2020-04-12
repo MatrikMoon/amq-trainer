@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { AnimeListEntry } from '../../..';
+import { Anime } from '../../..';
 import { FButton } from '../../components/FButton';
 
 const defaultSelectedColor: string = '#969696';
@@ -10,15 +10,15 @@ const incorrectSelectedColor: string = '#ff6114';
 const incorrectSelectedSecondaryColor: string = '#fc0254';
 
 interface ButtonPickerProps {
-	optionList: Array<AnimeListEntry>;
-    correctAnime: AnimeListEntry;
+	optionList: Array<Anime>;
+    correctAnime: Anime;
     displayCorrectAnswers: boolean;
 
-	optionClicked: (anime: AnimeListEntry) => void;
+	optionClicked: (anime: Anime) => void;
 }
 
 interface ButtonPickerState {
-	selectedAnime?: AnimeListEntry;
+	selectedAnime?: Anime;
 }
 
 class ButtonPicker extends Component<ButtonPickerProps, ButtonPickerState> {
@@ -28,7 +28,7 @@ class ButtonPicker extends Component<ButtonPickerProps, ButtonPickerState> {
 		this.state = {};
 	}
 
-	private handleOptionClick(animeListEntry: AnimeListEntry) {
+	private handleOptionClick(animeListEntry: Anime) {
 		//Don't let someone pick more than once. If they get it wrong they gotta suck it up and watch the video
 		if (this.props.displayCorrectAnswers) return;
 
