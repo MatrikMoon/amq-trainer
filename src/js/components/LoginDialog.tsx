@@ -50,15 +50,11 @@ class LoginDialog extends Component<LoginDialogProps, LoginDialogState> {
 		this.handleSnackbarClose = this.handleSnackbarClose.bind(this);
 	}
 
-	private onUsernameChange(event: {
-		target: { name: string; value: string };
-	}) {
+	private onUsernameChange(event: { target: { name: string; value: string } }) {
 		this.setState({ username: event.target.value });
 	}
 
-	private onPasswordChange(event: {
-		target: { name: string; value: string };
-	}) {
+	private onPasswordChange(event: { target: { name: string; value: string } }) {
 		this.setState({ password: event.target.value });
 	}
 
@@ -148,14 +144,11 @@ class LoginDialog extends Component<LoginDialogProps, LoginDialogState> {
 					disableEscapeKeyDown
 					aria-labelledby='form-dialog-title'
 				>
-					<DialogTitle id='form-dialog-title'>
-						Log in / Register
-					</DialogTitle>
+					<DialogTitle id='form-dialog-title'>Log in / Register</DialogTitle>
 					<DialogContent>
 						<DialogContentText>
-							Please enter your username and password. If you have
-							not registered, you may do so by entering an unused
-							username and password and pressing Register
+							Please enter your username and password. If you have not registered, you may do so by
+							entering an unused username and password and pressing Register
 						</DialogContentText>
 						<TextField
 							autoFocus
@@ -193,17 +186,8 @@ class LoginDialog extends Component<LoginDialogProps, LoginDialogState> {
 						</Button>
 					</DialogActions>
 				</Dialog>
-				<Snackbar
-					open={this.state.snackbarOpen}
-					autoHideDuration={6000}
-					onClose={this.handleSnackbarClose}
-				>
-					<MuiAlert
-						elevation={6}
-						variant='filled'
-						onClose={this.handleSnackbarClose}
-						severity='error'
-					>
+				<Snackbar open={this.state.snackbarOpen} autoHideDuration={6000} onClose={this.handleSnackbarClose}>
+					<MuiAlert elevation={6} variant='filled' onClose={this.handleSnackbarClose} severity='error'>
 						An unknown error occurred
 					</MuiAlert>
 				</Snackbar>

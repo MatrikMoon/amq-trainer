@@ -7,12 +7,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-.header-typography {
-  flex-grow: 1;
-  text-align: right;
-}
-
-.header {
+.Homepage {
   background-color: #282c34;
   min-height: 100vh;
   display: flex;
@@ -21,27 +16,6 @@ body {
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
-
-  .logo {
-    .moonlogo {
-      height: 20vmin;
-    }
-
-    .starslogo {
-      animation: logo-spin infinite 20s linear;
-      height: 20vmin;
-      margin-left: -20vmin;
-    }
-
-    @keyframes logo-spin {
-      from {
-        transform: rotate(0deg);
-      }
-      to {
-        transform: rotate(360deg);
-      }
-    }
-  }
 }
 
 .btn {

@@ -1,4 +1,5 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
+import '../../../style/components/progressMoon/ProgressMoon.scss'
 
 interface ProgressMoonProps {}
 
@@ -15,12 +16,12 @@ class ProgressMoon extends Component<ProgressMoonProps, ProgressMoonState> {
 		return (
 			<div className='logo'>
 				<img
-					src={require('./moonmoonlayer.png')}
+					src={require('../../../style/components/progressMoon/moonmoonlayer.png')}
 					className='moonlogo'
 					alt='logo'
 				/>
 				<img
-					src={require('./moonstarlayer.png')}
+					src={require('../../../style/components/progressMoon/moonstarlayer.png')}
 					className='starslogo'
 					alt='logo'
 				/>

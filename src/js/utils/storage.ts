@@ -15,6 +15,7 @@ export type Settings = {
     masterHistory: Array<QuizAnswer>;
 
     guessTime: number;
+    postGuessTime: number;
 
     multipleChoice: boolean;
     firstLogin: boolean;
@@ -59,6 +60,7 @@ export async function register(username: string, password: string): Promise<bool
     currentSettings.animes = tempList;
     currentSettings.masterHistory = [];
     currentSettings.guessTime = 20;
+    currentSettings.postGuessTime = 10;
     currentSettings.multipleChoice = false;
     currentSettings.firstLogin = true;
 
@@ -94,6 +96,7 @@ export function loadSettings(): Settings {
         masterHistory: JSON.parse(window.localStorage.getItem(getPrefixedKey(getCurrentUser() as string, 'masterHistory')) as string) as Array<QuizAnswer>,
 
         guessTime: parseInt(window.localStorage.getItem(getPrefixedKey(getCurrentUser() as string, 'guessTime')) ?? '0'),
+        postGuessTime: parseInt(window.localStorage.getItem(getPrefixedKey(getCurrentUser() as string, 'postGuessTime')) ?? '10'),
 
         multipleChoice: window.localStorage.getItem(getPrefixedKey(getCurrentUser() as string, 'multipleChoice')) as string === 'true',
         firstLogin: window.localStorage.getItem(getPrefixedKey(getCurrentUser() as string, 'firstLogin')) as string === 'true',
@@ -111,6 +114,7 @@ export function saveSettings(settings: Settings) {
     window.localStorage.setItem(getPrefixedKey(getCurrentUser() as string, 'masterHistory'), JSON.stringify(settings.masterHistory));
 
     window.localStorage.setItem(getPrefixedKey(getCurrentUser() as string, 'guessTime'), settings.guessTime.toString());
+    window.localStorage.setItem(getPrefixedKey(getCurrentUser() as string, 'postGuessTime'), settings.postGuessTime.toString());
     
     window.localStorage.setItem(getPrefixedKey(getCurrentUser() as string, 'multipleChoice'), settings.multipleChoice ? 'true' : 'false');
     window.localStorage.setItem(getPrefixedKey(getCurrentUser() as string, 'firstLogin'), settings.firstLogin ? 'true' : 'false');

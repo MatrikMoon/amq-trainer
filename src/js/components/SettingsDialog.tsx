@@ -37,12 +37,10 @@ interface SettingsDialogState {
 	multipleChoice: boolean;
 
 	guessTime: number;
+	postGuessTime: number;
 }
 
-class SettingsDialog extends Component<
-	SettingsDialogProps,
-	SettingsDialogState
-> {
+class SettingsDialog extends Component<SettingsDialogProps, SettingsDialogState> {
 	constructor(props: any) {
 		super(props);
 
@@ -55,6 +53,7 @@ class SettingsDialog extends Component<
 			animeUrlInput: '',
 			multipleChoice: settings.multipleChoice,
 			guessTime: settings.guessTime,
+			postGuessTime: settings.postGuessTime,
 		};
 
 		this.handleClose = this.handleClose.bind(this);
@@ -64,18 +63,17 @@ class SettingsDialog extends Component<
 		this.onAnimeUrlChange = this.onAnimeUrlChange.bind(this);
 		this.handleDeleteClick = this.handleDeleteClick.bind(this);
 		this.handleAddClick = this.handleAddClick.bind(this);
-		this.handleGuessTimeSliderChange = this.handleGuessTimeSliderChange.bind(
-			this
-		);
-		this.handleGuessTimeInputChange = this.handleGuessTimeInputChange.bind(
-			this
-		);
+		this.handleGuessTimeSliderChange = this.handleGuessTimeSliderChange.bind(this);
+		this.handleGuessTimeInputChange = this.handleGuessTimeInputChange.bind(this);
+		this.handlePostGuessTimeSliderChange = this.handlePostGuessTimeSliderChange.bind(this);
+		this.handlePostGuessTimeInputChange = this.handlePostGuessTimeInputChange.bind(this);
 	}
 
 	private handleSave() {
 		const settings = this.state.settings;
 		settings.multipleChoice = this.state.multipleChoice;
 		settings.guessTime = this.state.guessTime;
+		settings.postGuessTime = this.state.postGuessTime;
 		saveSettings(this.state.settings);
 		this.handleClose();
 	}
@@ -88,15 +86,11 @@ class SettingsDialog extends Component<
 		this.setState({ multipleChoice: event.target.checked });
 	}
 
-	private onAnimeTitleChange(event: {
-		target: { name: string; value: string };
-	}) {
+	private onAnimeTitleChange(event: { target: { name: string; value: string } }) {
 		this.setState({ animeTitleInput: event.target.value });
 	}
 
-	private onAnimeUrlChange(event: {
-		target: { name: string; value: string };
-	}) {
+	private onAnimeUrlChange(event: { target: { name: string; value: string } }) {
 		this.setState({ animeUrlInput: event.target.value });
 	}
 
@@ -118,45 +112,38 @@ class SettingsDialog extends Component<
 		});
 	}
 
-	private handleDeleteClick(
-		event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-	) {
+	private handleDeleteClick(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
 		const deleteClickedTitle =
-			event.currentTarget?.parentElement?.parentElement?.firstElementChild
-				?.firstElementChild?.firstElementChild?.innerHTML;
+			event.currentTarget?.parentElement?.parentElement?.firstElementChild?.firstElementChild?.firstElementChild
+				?.innerHTML;
 		const settings = this.state.settings;
-		settings.animes = settings.animes.filter(
-			(x) => x.title !== deleteClickedTitle
-		);
+		settings.animes = settings.animes.filter((x) => x.title !== deleteClickedTitle);
 
 		this.setState({ settings: settings });
 	}
 
-	private handleGuessTimeSliderChange(
-		event: any,
-		newValue: number | number[]
-	) {
+	private handleGuessTimeSliderChange(event: any, newValue: number | number[]) {
 		this.setState({ guessTime: newValue as number });
 	}
 
-	private handleGuessTimeInputChange(
-		event: React.ChangeEvent<HTMLInputElement>
-	) {
+	private handleGuessTimeInputChange(event: React.ChangeEvent<HTMLInputElement>) {
 		this.setState({ guessTime: parseInt(event.target.value) });
+	}
+
+	private handlePostGuessTimeSliderChange(event: any, newValue: number | number[]) {
+		this.setState({ postGuessTime: newValue as number });
+	}
+
+	private handlePostGuessTimeInputChange(event: React.ChangeEvent<HTMLInputElement>) {
+		this.setState({ postGuessTime: parseInt(event.target.value) });
 	}
 
 	render() {
 		return (
-			<Dialog
-				open={this.props.open}
-				onClose={this.handleClose}
-				aria-labelledby='form-dialog-title'
-			>
+			<Dialog open={this.props.open} onClose={this.handleClose} aria-labelledby='form-dialog-title'>
 				<DialogTitle id='form-dialog-title'>Settings</DialogTitle>
 				<DialogContent>
-					<DialogContentText>
-						Settings will be saved to your browser
-					</DialogContentText>
+					<DialogContentText>Settings will be saved to your browser</DialogContentText>
 					<List>
 						<ListItem>
 							<ListItemText primary='Multiple choice' />
@@ -176,9 +163,7 @@ class SettingsDialog extends Component<
 								<Grid item xs>
 									<Slider
 										value={this.state.guessTime}
-										onChange={
-											this.handleGuessTimeSliderChange
-										}
+										onChange={this.handleGuessTimeSliderChange}
 										aria-labelledby='input-slider'
 									/>
 								</Grid>
@@ -186,9 +171,36 @@ class SettingsDialog extends Component<
 									<Input
 										value={this.state.guessTime}
 										margin='dense'
-										onChange={
-											this.handleGuessTimeInputChange
-										}
+										onChange={this.handleGuessTimeInputChange}
+										//onBlur={handleBlur}
+										inputProps={{
+											step: 1,
+											min: 0,
+											max: 100,
+											type: 'number',
+											'aria-labelledby': 'input-slider',
+										}}
+									/>
+								</Grid>
+							</Grid>
+						</ListItem>
+						<ListItem>
+							<Typography id='input-slider' gutterBottom>
+								Postguess Time
+							</Typography>
+							<Grid container spacing={2} alignItems='center'>
+								<Grid item xs>
+									<Slider
+										value={this.state.postGuessTime}
+										onChange={this.handlePostGuessTimeSliderChange}
+										aria-labelledby='input-slider'
+									/>
+								</Grid>
+								<Grid item>
+									<Input
+										value={this.state.postGuessTime}
+										margin='dense'
+										onChange={this.handlePostGuessTimeInputChange}
 										//onBlur={handleBlur}
 										inputProps={{
 											step: 1,
@@ -212,11 +224,7 @@ class SettingsDialog extends Component<
 								label='Video url'
 								onChange={this.onAnimeUrlChange}
 							/>
-							<IconButton
-								edge='end'
-								aria-label='delete'
-								onClick={this.handleAddClick}
-							>
+							<IconButton edge='end' aria-label='delete' onClick={this.handleAddClick}>
 								<AddIcon />
 							</IconButton>
 						</form>
@@ -224,16 +232,9 @@ class SettingsDialog extends Component<
 							this.state.settings.animes.map((anime) => {
 								return (
 									<ListItem key={anime.title}>
-										<ListItemText
-											primary={anime.title}
-											secondary={anime.url}
-										/>
+										<ListItemText primary={anime.title} secondary={anime.url} />
 										<ListItemSecondaryAction>
-											<IconButton
-												edge='end'
-												aria-label='delete'
-												onClick={this.handleDeleteClick}
-											>
+											<IconButton edge='end' aria-label='delete' onClick={this.handleDeleteClick}>
 												<DeleteIcon />
 											</IconButton>
 										</ListItemSecondaryAction>

@@ -4,9 +4,9 @@ export interface Anime {
 }
 
 export interface QuizAnswer {
-    askedFor: Anime;
+    correctAnime: Anime;
+    guessedAnime?: Anime;
     correct: boolean;
-    answer?: Anime;
 }
 
 type MoeResponseItem = {
